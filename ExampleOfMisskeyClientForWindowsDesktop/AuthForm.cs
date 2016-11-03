@@ -20,20 +20,20 @@ namespace ExampleOfMisskeyClientForWindowsDesktop
 		private async void AuthForm_Load(object sender, EventArgs e)
 		{
 			var app = new Misq.App("CLYauOEBwoyvlqLS1SvVJK970mSc1OAc");
-			this.done = await app.Authorize();
-		}
+			var done = await app.Authorize();
 
-		private async void button1_Click(object sender, EventArgs e)
-		{
-			var me = await this.done();
-
-			this.Hide();
-
-			var f = new MainForm(me);
-			f.Show();
-			f.FormClosed += (_1, _2) =>
+			this.button.Click += async (_1, _2) =>
 			{
-				this.Close();
+				var me = await done();
+
+				this.Hide();
+
+				var f = new MainForm(me);
+				f.Show();
+				f.FormClosed += (__1, __2) =>
+				{
+					this.Close();
+				};
 			};
 		}
 	}
