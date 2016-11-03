@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
-using Newtonsoft.Json;
 
 namespace ExampleOfMisskeyClientForWindowsDesktop
 {
@@ -17,50 +11,27 @@ namespace ExampleOfMisskeyClientForWindowsDesktop
 			InitializeComponent();
 		}
 
-		public string token
+		public Func<Task<Misq.Me>> done
 		{
 			get;
 			set;
 		}
 
-		private void AuthForm_Load(object sender, EventArgs e)
+		private async void AuthForm_Load(object sender, EventArgs e)
 		{
-			var wc = new System.Net.WebClient();
-			var ps = new System.Collections.Specialized.NameValueCollection();
-			ps.Add("app_secret", Core.secret);
-			var res = wc.UploadValues(Core.api + "/auth/session/generate", ps);
-			wc.Dispose();
-			var json = Encoding.UTF8.GetString(res);
-			var obj = JsonConvert.DeserializeObject<dynamic>(json);
-			this.token = obj.token.Value;
-
-			System.Diagnostics.Process.Start(Core.auth + "/" + this.token);
+			var app = new Misq.App("CLYauOEBwoyvlqLS1SvVJK970mSc1OAc");
+			this.done = await app.Authorize();
 		}
 
-		private void button1_Click(object sender, EventArgs e)
+		private async void button1_Click(object sender, EventArgs e)
 		{
-			var wc = new System.Net.WebClient();
-			var ps = new System.Collections.Specialized.NameValueCollection();
-			ps.Add("app_secret", Core.secret);
-			ps.Add("token", this.token);
-			var res = wc.UploadValues(Core.api + "/auth/session/userkey", ps);
-			wc.Dispose();
-			var json = Encoding.UTF8.GetString(res);
-			var obj = JsonConvert.DeserializeObject<dynamic>(json);
-			var userkey = obj.userkey.Value;
-
-			var wc2 = new System.Net.WebClient();
-			wc2.Headers.Add("userkey", userkey);
-			var res2 = wc2.UploadValues(Core.api + "/i", new System.Collections.Specialized.NameValueCollection());
-			wc2.Dispose();
-			var json2 = Encoding.UTF8.GetString(res2);
-			var obj2 = JsonConvert.DeserializeObject<dynamic>(json2);
+			var me = await this.done();
 
 			this.Hide();
 
-			var f = new MainForm(userkey, obj2);
+			var f = new MainForm(me);
 			f.Show();
-			f.FormClosed += (x, y) =>
+			f.FormClosed += (_1, _2) =>
 			{
 				this.Close();
 			};
