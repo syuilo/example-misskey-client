@@ -19,7 +19,7 @@ namespace ExampleOfMisskeyClientForWindowsDesktop
 
 		private async void AuthForm_Load(object sender, EventArgs e)
 		{
-			var app = new Misq.App("CLYauOEBwoyvlqLS1SvVJK970mSc1OAc");
+			var app = new Misq.App("https://misskey.xyz", "CLYauOEBwoyvlqLS1SvVJK970mSc1OAc");
 			var done = await app.Authorize();
 
 			this.button.Click += async (_1, _2) =>
