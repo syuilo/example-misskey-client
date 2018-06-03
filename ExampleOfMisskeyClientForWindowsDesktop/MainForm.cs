@@ -28,7 +28,7 @@ namespace ExampleOfMisskeyClientForWindowsDesktop
 
 		private async void button1_Click(object sender, EventArgs e)
 		{
-			await this.me.Request("/posts/create", new Dictionary<string, string> {
+			await this.me.Request("notes/create", new Dictionary<string, object> {
 				{ "text", this.textBox1.Text }
 			});
 			this.textBox1.Text = string.Empty;
